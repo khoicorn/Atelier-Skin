@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  color: #171a18;
+  background: #f2efe8;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+* { box-sizing: border-box; }
+html { background: #f2efe8; }
+body { margin: 0; min-width: 320px; min-height: 100dvh; overflow-x: hidden; }
+button, input, select { font: inherit; }
+button { -webkit-tap-highlight-color: transparent; }
+
+.font-serif {
+  font-family: "Iowan Old Style", "Baskerville", "Palatino Linotype", Georgia, serif;
+}
+
+.eyebrow {
+  margin-bottom: .55rem;
+  font-size: .58rem;
+  font-weight: 700;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: rgb(23 26 24 / .38);
+}
+
+.ambient {
+  position: fixed;
+  pointer-events: none;
+  border-radius: 9999px;
+  filter: blur(2px);
+  opacity: .6;
+}
+.ambient-one {
+  left: -12rem;
+  top: 9rem;
+  width: 28rem;
+  height: 28rem;
+  background: radial-gradient(circle, rgb(111 125 104 / .10), transparent 68%);
+}
+.ambient-two {
+  bottom: 2rem;
+  right: -10rem;
+  width: 26rem;
+  height: 26rem;
+  background: radial-gradient(circle, rgb(185 164 126 / .10), transparent 68%);
+}
+
+.animate-in { animation: reveal .35s ease-out both; }
+@keyframes reveal {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.form-field { display: block; }
+.form-field > span {
+  display: block;
+  margin-bottom: .45rem;
+  font-size: .6rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: rgb(23 26 24 / .42);
+}
+.form-field input,
+.form-field select {
+  width: 100%;
+  height: 2.75rem;
+  border: 1px solid rgb(0 0 0 / .10);
+  border-radius: .8rem;
+  background: rgb(255 255 255 / .62);
+  padding: 0 .8rem;
+  font-size: .78rem;
+  outline: none;
+}
+.form-field input:focus,
+.form-field select:focus { border-color: rgb(111 125 104 / .6); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; }
+}
