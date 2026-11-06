@@ -1,14 +1,24 @@
 import { useEffect, useState } from "react";
 
-export function useLocalStorage<T>(key: string, initial: T) {
+/** State that persists to localStorage. Accepts a value or a lazy initializer. */
+export function useLocalStorage<T>(key: string, initial: T | (() => T)) {
   const [value, setValue] = useState<T>(() => {
     try {
       const saved = localStorage.getItem(key);
-      return saved ? (JSON.parse(saved) as T) : initial;
+      if (saved) return JSON.parse(saved) as T;
     } catch {
-      return initial;
+      // Fall through to the initial value.
     }
+    return typeof initial === "function" ? (initial as () => T)() : initial;
   });
-  useEffect(() => { localStorage.setItem(key, JSON.stringify(value)); }, [key, value]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch {
+      // Storage full or blocked. The app keeps working for this session.
+    }
+  }, [key, value]);
+
   return [value, setValue] as const;
 }

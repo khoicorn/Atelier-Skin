@@ -3,38 +3,41 @@
 @tailwind utilities;
 
 :root {
-  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-family: "Inter Variable", Inter, "Segoe UI", Roboto, system-ui, sans-serif;
   color: #171a18;
   background: #f2efe8;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
+  font-feature-settings: "cv11", "ss01";
 }
 
 * { box-sizing: border-box; }
-html { background: #f2efe8; }
+html { background: #f2efe8; -webkit-text-size-adjust: 100%; }
 body { margin: 0; min-width: 320px; min-height: 100dvh; overflow-x: hidden; }
-button, input, select { font: inherit; }
-button { -webkit-tap-highlight-color: transparent; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+img { max-width: 100%; }
 
 .font-serif {
-  font-family: "Iowan Old Style", "Baskerville", "Palatino Linotype", Georgia, serif;
+  font-family: "Cormorant Garamond", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  font-weight: 500;
+  font-variant-numeric: lining-nums;
 }
 
 .eyebrow {
   margin-bottom: .55rem;
-  font-size: .58rem;
-  font-weight: 700;
+  font-size: .6rem;
+  font-weight: 650;
   letter-spacing: .22em;
   text-transform: uppercase;
-  color: rgb(23 26 24 / .38);
+  color: rgb(23 26 24 / .42);
 }
 
 .ambient {
   position: fixed;
   pointer-events: none;
   border-radius: 9999px;
-  filter: blur(2px);
   opacity: .6;
 }
 .ambient-one {
@@ -52,35 +55,82 @@ button { -webkit-tap-highlight-color: transparent; }
   background: radial-gradient(circle, rgb(185 164 126 / .10), transparent 68%);
 }
 
-.animate-in { animation: reveal .35s ease-out both; }
-@keyframes reveal {
-  from { opacity: 0; transform: translateY(5px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+/* Motion: short fades only. */
+/* "backwards" (not "both") so no transform layer stays after the fade ends. */
+.animate-in { animation: reveal .3s ease-out backwards; }
+.sheet-backdrop { animation: fade .2s ease-out both; }
+.sheet-panel { animation: rise .26s cubic-bezier(.2, .8, .2, 1) both; }
+.toast { animation: fade .2s ease-out both; }
+@keyframes reveal { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+@keyframes rise { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
 
-.form-field { display: block; }
-.form-field > span {
+/* Forms */
+.form-field { display: block; min-width: 0; }
+.form-field > span,
+.field-label {
   display: block;
   margin-bottom: .45rem;
-  font-size: .6rem;
-  font-weight: 700;
+  font-size: .62rem;
+  font-weight: 650;
   letter-spacing: .12em;
   text-transform: uppercase;
-  color: rgb(23 26 24 / .42);
+  color: rgb(23 26 24 / .45);
 }
 .form-field input,
-.form-field select {
+.form-field select,
+.form-field textarea {
+  display: block;
   width: 100%;
+  min-width: 0;
+  height: 3rem;
+  border: 1px solid rgb(0 0 0 / .10);
+  border-radius: .85rem;
+  background: rgb(255 255 255 / .62);
+  padding: 0 .85rem;
+  font-size: 16px; /* 16px stops mobile browsers from zooming on focus */
+  outline: none;
+  appearance: none;
+}
+.form-field textarea { height: auto; padding: .75rem .85rem; resize: vertical; line-height: 1.45; }
+.form-field input[type="date"] { font-size: 15px; }
+.form-field input::placeholder,
+.form-field textarea::placeholder { color: rgb(23 26 24 / .32); }
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus { border-color: rgb(111 125 104 / .65); background: rgb(255 255 255 / .85); }
+
+/* Compact date control used inline on the plan page */
+.date-chip {
+  flex-shrink: 0;
   height: 2.75rem;
+  max-width: 9.75rem;
   border: 1px solid rgb(0 0 0 / .10);
   border-radius: .8rem;
-  background: rgb(255 255 255 / .62);
-  padding: 0 .8rem;
-  font-size: .78rem;
+  background: rgb(255 255 255 / .7);
+  padding: 0 .6rem;
+  font-size: 14px;
   outline: none;
 }
-.form-field input:focus,
-.form-field select:focus { border-color: rgb(111 125 104 / .6); }
+.date-chip:focus { border-color: rgb(111 125 104 / .65); }
+
+.list-label {
+  margin-bottom: .6rem;
+  padding: 0 .25rem;
+  font-size: .62rem;
+  font-weight: 650;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: rgb(23 26 24 / .45);
+}
+.list-empty {
+  border: 1px dashed rgb(0 0 0 / .12);
+  border-radius: 1.25rem;
+  padding: 1.1rem 1.25rem;
+  font-size: .75rem;
+  line-height: 1.25rem;
+  color: rgb(23 26 24 / .5);
+}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; }
