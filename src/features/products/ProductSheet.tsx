@@ -2,7 +2,7 @@ import { useState } from "react";
 import { DeleteButton } from "../../components/common";
 import { Button } from "../../components/ui/button";
 import { DateInput, Field, MoneyInput, Segmented } from "../../components/ui/field";
-import { closeSheet, Sheet } from "../../components/ui/sheet";
+import { closeSheet, isChanged, Sheet } from "../../components/ui/sheet";
 import { Product, PRODUCT_CATEGORIES, PRODUCT_STATUSES, ProductStatus } from "../../data";
 
 type Props = {
@@ -10,9 +10,11 @@ type Props = {
   isNew: boolean;
   today: string;
   onSave: (product: Product) => void;
-  onDelete: (id: string) => void;
+  onDelete: (product: Product) => void;
   onClose: () => void;
 };
+
+const futureHint = (date: string, today: string) => (date && date > today ? <span className="text-clay">This date is in the future.</span> : undefined);
 
 export function ProductSheet({ product, isNew, today, onSave, onDelete, onClose }: Props) {
   const [draft, setDraft] = useState<Product>(product);
@@ -39,9 +41,10 @@ export function ProductSheet({ product, isNew, today, onSave, onDelete, onClose 
       eyebrow={isNew ? "New product" : draft.brand || "Product"}
       title={isNew ? "Add product" : "Edit product"}
       onClose={onClose}
+      dirty={isChanged(draft, product)}
       footer={
         <div className="flex items-center gap-2">
-          {!isNew && <DeleteButton onConfirm={() => { onDelete(product.id); closeSheet(onClose); }} />}
+          {!isNew && <DeleteButton onDelete={() => { onDelete(product); closeSheet(onClose); }} />}
           <Button className="h-12 flex-1" onClick={save} disabled={!valid}>{isNew ? "Add product" : "Save changes"}</Button>
         </div>
       }
@@ -69,16 +72,14 @@ export function ProductSheet({ product, isNew, today, onSave, onDelete, onClose 
           <Segmented label="Status" columns={2} options={PRODUCT_STATUSES} value={draft.status} onChange={(status) => status && setStatus(status)} />
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Purchase date">
-            <DateInput optional value={draft.purchaseDate} onChange={(purchaseDate) => set({ purchaseDate })} />
-          </Field>
-          <Field label="Opened date">
-            <DateInput optional value={draft.openedDate} onChange={(openedDate) => set({ openedDate })} />
-          </Field>
-        </div>
-        <Field label={finished ? "Finished on" : "Estimated empty date"} hint={finished ? undefined : "A guess is fine. Update it when the product runs out."}>
-          <DateInput optional value={draft.emptyDate} onChange={(emptyDate) => set({ emptyDate })} />
+        <Field label="Purchase date" hint={futureHint(draft.purchaseDate, today) ?? "Needed to count the price in a month."}>
+          <DateInput label="Purchase date" optional value={draft.purchaseDate} onChange={(purchaseDate) => set({ purchaseDate })} />
+        </Field>
+        <Field label="Opened date" hint={futureHint(draft.openedDate, today)}>
+          <DateInput label="Opened date" optional value={draft.openedDate} onChange={(openedDate) => set({ openedDate })} />
+        </Field>
+        <Field label={finished ? "Finished on" : "Estimated empty date"} hint={finished ? futureHint(draft.emptyDate, today) : "A guess is fine. Update it when the product runs out."}>
+          <DateInput label={finished ? "Finished on" : "Estimated empty date"} optional value={draft.emptyDate} onChange={(emptyDate) => set({ emptyDate })} />
         </Field>
 
         <Field label="Note">

@@ -25,14 +25,27 @@ img { max-width: 100%; }
   font-variant-numeric: lining-nums;
 }
 
-.eyebrow {
-  margin-bottom: .55rem;
-  font-size: .6rem;
-  font-weight: 650;
-  letter-spacing: .22em;
+/* One page width for header and content, so they line up. */
+.shell { margin-inline: auto; width: 100%; max-width: 72rem; padding-inline: 1rem; }
+@media (min-width: 768px) { .shell { padding-inline: 2rem; } }
+
+/* One small-caps label style everywhere. 12px minimum for legibility. */
+.eyebrow,
+.label,
+.form-field > span,
+.field-label,
+.list-label {
+  display: block;
+  font-size: .75rem;
+  line-height: 1rem;
+  font-weight: 600;
+  letter-spacing: .1em;
   text-transform: uppercase;
-  color: rgb(23 26 24 / .42);
+  color: rgb(23 26 24 / .6);
 }
+.eyebrow { margin-bottom: .4rem; }
+.form-field > span, .field-label { margin-bottom: .45rem; }
+.list-label { margin-bottom: .6rem; padding: 0 .25rem; }
 
 .ambient {
   position: fixed;
@@ -55,8 +68,7 @@ img { max-width: 100%; }
   background: radial-gradient(circle, rgb(185 164 126 / .10), transparent 68%);
 }
 
-/* Motion: short fades only. */
-/* "backwards" (not "both") so no transform layer stays after the fade ends. */
+/* Motion: short fades only. "backwards" (not "both") so no transform layer stays after the fade ends. */
 .animate-in { animation: reveal .3s ease-out backwards; }
 .sheet-backdrop { animation: fade .2s ease-out both; }
 .sheet-panel { animation: rise .26s cubic-bezier(.2, .8, .2, 1) both; }
@@ -67,19 +79,10 @@ img { max-width: 100%; }
 
 /* Forms */
 .form-field { display: block; min-width: 0; }
-.form-field > span,
-.field-label {
-  display: block;
-  margin-bottom: .45rem;
-  font-size: .62rem;
-  font-weight: 650;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  color: rgb(23 26 24 / .45);
-}
 .form-field input,
 .form-field select,
-.form-field textarea {
+.form-field textarea,
+.field-box {
   display: block;
   width: 100%;
   min-width: 0;
@@ -92,44 +95,25 @@ img { max-width: 100%; }
   outline: none;
   appearance: none;
 }
+.field-box { display: flex; align-items: center; justify-content: space-between; gap: .5rem; font-size: 15px; }
 .form-field textarea { height: auto; padding: .75rem .85rem; resize: vertical; line-height: 1.45; }
-.form-field input[type="date"] { font-size: 15px; }
 .form-field input::placeholder,
-.form-field textarea::placeholder { color: rgb(23 26 24 / .32); }
+.form-field textarea::placeholder { color: rgb(23 26 24 / .4); }
 .form-field input:focus,
 .form-field select:focus,
 .form-field textarea:focus { border-color: rgb(111 125 104 / .65); background: rgb(255 255 255 / .85); }
+/* The native date/time input sits invisibly on top of .field-box and opens the phone's picker. */
+.native-picker { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.native-picker:focus-visible + .field-box,
+.field-wrap:focus-within .field-box { border-color: rgb(111 125 104 / .65); }
 
-/* Compact date control used inline on the plan page */
-.date-chip {
-  flex-shrink: 0;
-  height: 2.75rem;
-  max-width: 9.75rem;
-  border: 1px solid rgb(0 0 0 / .10);
-  border-radius: .8rem;
-  background: rgb(255 255 255 / .7);
-  padding: 0 .6rem;
-  font-size: 14px;
-  outline: none;
-}
-.date-chip:focus { border-color: rgb(111 125 104 / .65); }
-
-.list-label {
-  margin-bottom: .6rem;
-  padding: 0 .25rem;
-  font-size: .62rem;
-  font-weight: 650;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  color: rgb(23 26 24 / .45);
-}
 .list-empty {
-  border: 1px dashed rgb(0 0 0 / .12);
+  border: 1px dashed rgb(0 0 0 / .14);
   border-radius: 1.25rem;
-  padding: 1.1rem 1.25rem;
-  font-size: .75rem;
+  padding: 1rem 1.25rem;
+  font-size: .8125rem;
   line-height: 1.25rem;
-  color: rgb(23 26 24 / .5);
+  color: rgb(23 26 24 / .62);
 }
 
 @media (prefers-reduced-motion: reduce) {

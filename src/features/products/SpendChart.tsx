@@ -4,18 +4,19 @@ import { cn, formatCompact } from "../../lib/utils";
 
 /**
  * Stacked monthly columns: clinic (bottom) and products (top).
- * Tap a column to select that month. Values are carried by the legend.
+ * Every month with spending shows its total. Tap a column to select that month.
  */
 export function SpendChart({ series, selected, onSelect }: { series: MonthSpend[]; selected: string; onSelect: (month: string) => void }) {
   const max = Math.max(...series.map((item) => item.total), 0);
   const empty = max === 0;
+  const columns = { gridTemplateColumns: `repeat(${series.length}, minmax(0, 1fr))` };
 
   return (
     <div>
-      <div className="relative h-36">
-        {empty && <p className="absolute inset-x-0 top-1/3 text-center text-[11px] text-ink/40">No spending recorded in these months</p>}
-        <div className="absolute inset-x-0 bottom-0 h-px bg-black/[.09]" />
-        <div className="relative grid h-full" style={{ gridTemplateColumns: `repeat(${series.length}, minmax(0, 1fr))` }}>
+      <div className="relative h-28">
+        {empty && <p className="absolute inset-x-0 top-1/3 text-center text-[13px] text-ink/60">No spending recorded in these months</p>}
+        <div className="absolute inset-x-0 bottom-0 h-px bg-black/[.1]" />
+        <div className="relative grid h-full" style={columns}>
           {series.map((item) => {
             const active = item.month === selected;
             const height = empty ? 0 : (item.total / max) * 100;
@@ -27,14 +28,12 @@ export function SpendChart({ series, selected, onSelect }: { series: MonthSpend[
                 onClick={() => onSelect(item.month)}
                 aria-pressed={active}
                 aria-label={`${formatMonth(item.month)}: ${formatCompact(item.total)} total, ${formatCompact(item.clinic)} clinic, ${formatCompact(item.products)} products`}
-                className={cn("group relative flex h-full flex-col items-center justify-end rounded-xl transition-colors", active ? "bg-ink/[.035]" : "hover:bg-ink/[.02]")}
+                className="flex h-full flex-col items-center justify-end"
               >
                 {item.total > 0 && (
-                  <span className={cn("mb-1.5 text-[10px] tabular-nums", active ? "font-semibold text-ink" : "text-transparent group-hover:text-ink/50")}>
-                    {formatCompact(item.total)}
-                  </span>
+                  <span className={cn("mb-1 text-xs tabular-nums", active ? "font-semibold text-ink" : "text-ink/60")}>{formatCompact(item.total)}</span>
                 )}
-                <span className="flex w-6 flex-col gap-[2px]" style={{ height: `${Math.max(height - 14, item.total ? 3 : 0)}%` }}>
+                <span className="flex w-6 flex-col gap-[2px]" style={{ height: `${Math.max(height - 18, item.total ? 4 : 0)}%` }}>
                   {item.products > 0 && <span className="w-full rounded-t-[4px] bg-chart-products" style={{ flexGrow: 100 - clinicShare }} />}
                   {item.clinic > 0 && <span className={cn("w-full bg-chart-clinic", item.products === 0 && "rounded-t-[4px]")} style={{ flexGrow: clinicShare }} />}
                 </span>
@@ -43,11 +42,17 @@ export function SpendChart({ series, selected, onSelect }: { series: MonthSpend[
           })}
         </div>
       </div>
-      <div className="mt-2 grid" style={{ gridTemplateColumns: `repeat(${series.length}, minmax(0, 1fr))` }}>
+      <div className="mt-1.5 grid" style={columns}>
         {series.map((item) => (
-          <span key={item.month} className={cn("text-center text-[10.5px]", item.month === selected ? "font-semibold text-ink" : "text-ink/40")}>
+          <button
+            key={item.month}
+            type="button"
+            tabIndex={-1}
+            onClick={() => onSelect(item.month)}
+            className={cn("h-8 text-center text-xs", item.month === selected ? "font-semibold text-ink underline decoration-2 underline-offset-[6px]" : "text-ink/60")}
+          >
             {formatMonthShort(item.month)}
-          </span>
+          </button>
         ))}
       </div>
     </div>

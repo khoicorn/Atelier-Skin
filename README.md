@@ -7,27 +7,35 @@ A private, local-first skincare PWA, designed for a Samsung S24 Ultra. No login,
 The app has three tabs. Plan opens first.
 
 1. **Plan**: a weekly clinic plan. It comes with six weeks that alternate IPL F-AC / F-SR Therapy and Aqua Mesoderm Fusion Radiance.
-   - Pick the first clinic date. Later weeks follow every 7 days.
-   - Edit any week: service, date, clinic, price, note, and status (Planned, Booked, Completed, Skipped).
-   - A rescheduled week keeps its date when the first clinic date changes.
-   - Add weeks after Week 6, or delete weeks.
-   - Shows the current week, the next service, the plan total, and the completed cost.
-   - "Is it working?": rate each completed visit (Better, No change, Worse) and see the results per service.
+   - The top shows the phase, "Week X of N", progress, and the next visit with one-tap **Mark booked** / **Mark completed**.
+   - Past visits still marked Planned or Booked ask "Did it happen?" with one-tap Completed / Skipped.
+   - **Add service** adds a plan week or an **extra visit** (a one-off service that counts in cost, not in "Week X of N").
+   - Edit any visit: service, week, date, time, clinic, price, note, and status (Planned, Booked, Completed, Skipped).
+   - Completed and skipped visits are pinned to their date. Changing the first clinic date (in Settings) only moves upcoming visits.
+   - "Is it working?": rate each completed visit (Better, No change, Worse). A verdict appears after 2 ratings.
 2. **Products**: what you own and what it costs.
-   - Inventory with brand, category, price, purchase, opened and empty dates, and status.
-   - Monthly spending, with clinic services and products kept separate, plus a 6-month chart and the average monthly burn rate.
-   - A month view: what you bought and what you used that month. A history view by purchase month.
-   - Unknown prices show "Add price". The app never guesses a price.
+   - Buy soon: products marked almost empty or running out within 14 days.
+   - Monthly spending, clinic and products kept separate, a 6-month chart, "still planned this month", and the average of full months.
+   - Month view: clinic visits, products bought, finished and used that month. History by purchase month.
+   - Prices accept "850000", "850k" or "1tr1". Unknown prices show "Add price". The app never guesses a price.
 3. **Mirror**: weekly progress photos.
-   - Take a photo or pick one from the gallery. It is resized on the phone and stored in IndexedDB.
+   - Take a photo or pick one from the gallery. Gallery photos use the date the photo was taken. Photos are resized on the phone and stored in IndexedDB.
    - Title, date, note, and area tags (Full face, Chin, Forehead, Left cheek, Right cheek).
-   - Compare any two photos side by side. It also shows the days between them and the completed services in between.
+   - Before & after: the default pair is the oldest and newest photo of the same area. Shows the days between them and the completed visits in between.
 
-All records stay in the browser on the device: plan and products in localStorage, photos in IndexedDB. The app asks the browser to keep this data when the phone is low on space.
+**Settings** (icon at the top right): backup and restore, treatment phase, first clinic date, install help, and old-version data. A dot on the icon means no backup in the last 30 days.
+
+Deletes can be undone for 8 seconds. Closing a form with unsaved changes asks first, also with the Android back gesture.
+
+## Your data
+
+All records stay in the browser on the device: plan and products in localStorage, photos in IndexedDB. The app asks the browser not to clear this data.
+
+**Backup**: Settings → **Save backup file** (or **Send backup to Drive or Zalo**) writes one JSON file with the plan, products and all photos. **Restore from file** replaces everything on the device with that file, after a confirmation. Use it when changing phones.
 
 ## Upgrading from version 1 (daily tracking)
 
-On first launch, version 2 copies the old first clinic date, old clinic expenses (as completed weeks), and old product purchases. It does not delete the old daily check-ins. To remove them, open **Plan → settings (top right of the dark card) → Data from the old version**. Download a backup there first if you want to keep it.
+On first launch, version 2 copies old clinic expenses (as completed visits) and old product purchases. It does not delete the old daily check-ins. To remove them, open **Settings → Data from the old version**. Download them there first if you want to keep them.
 
 ## Local development
 

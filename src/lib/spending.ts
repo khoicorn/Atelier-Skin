@@ -32,6 +32,14 @@ export const averageMonthly = (series: MonthSpend[]) => {
   return Math.round(active.reduce((sum, item) => sum + item.total, 0) / active.length);
 };
 
+/** Average over the last 6 full months before `currentMonth`. The running month is left out because it is incomplete. */
+export const averageFullMonths = (plan: Plan, products: Product[], currentMonth: string) =>
+  averageMonthly(monthSeries(plan, products, addMonths(currentMonth, -1), 6));
+
+/** Products that ran out during `month`. */
+export const productsFinishedIn = (products: Product[], month: string) =>
+  products.filter((item) => item.status === "finished" && item.emptyDate && monthOf(item.emptyDate) === month);
+
 /** Products with a price but no purchase date. They cannot be placed in a month. */
 export const pricedWithoutDate = (products: Product[]) => products.filter((item) => item.price !== null && !item.purchaseDate);
 

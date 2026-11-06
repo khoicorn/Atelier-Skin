@@ -43,6 +43,20 @@ export const savePhoto = (photo: SkinPhoto) => run("readwrite", (store) => store
 
 export const deletePhoto = (id: string) => run("readwrite", (store) => store.delete(id)).then(() => undefined);
 
+/** Replaces every stored photo in one transaction (used by restore). Nothing changes if it fails. */
+export async function replaceAllPhotos(photos: SkinPhoto[]) {
+  const db = await openDb();
+  return new Promise<void>((resolve, reject) => {
+    const transaction = db.transaction(STORE, "readwrite");
+    const store = transaction.objectStore(STORE);
+    store.clear();
+    photos.forEach((photo) => store.put(photo));
+    transaction.oncomplete = () => { db.close(); resolve(); };
+    transaction.onerror = () => { db.close(); reject(transaction.error); };
+    transaction.onabort = () => { db.close(); reject(transaction.error); };
+  });
+}
+
 /** Resizes on the device to at most 1280 px and re-encodes as JPEG. The original never leaves the phone. */
 export async function compressPhoto(file: File) {
   const url = URL.createObjectURL(file);

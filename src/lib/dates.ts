@@ -39,10 +39,13 @@ const fmt = (options: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat("en
 
 /** "Thu 13 Nov" */
 export const formatDay = (iso: string) => fmt({ weekday: "short", day: "numeric", month: "short" }).format(asDate(iso));
+/** "Thu 13 Nov 2026" */
+export const formatDayYear = (iso: string) => fmt({ weekday: "short", day: "numeric", month: "short", year: "numeric" }).format(asDate(iso));
 /** "13 Nov 2026" */
 export const formatDate = (iso: string) => fmt({ day: "numeric", month: "short", year: "numeric" }).format(asDate(iso));
-/** "13 Nov" */
-export const formatShort = (iso: string) => fmt({ day: "numeric", month: "short" }).format(asDate(iso));
+/** "13 Nov", or "13 Nov 2027" when `today` is given and the year differs. */
+export const formatShort = (iso: string, today?: string) =>
+  today && iso.slice(0, 4) !== today.slice(0, 4) ? formatDate(iso) : fmt({ day: "numeric", month: "short" }).format(asDate(iso));
 /** "November 2026" */
 export const formatMonth = (month: string) => fmt({ month: "long", year: "numeric" }).format(asDate(monthStart(month)));
 /** "Nov" */

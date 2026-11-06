@@ -13,8 +13,12 @@ export type PlanEntry = {
   price: number | null;
   note: string;
   status: PlanStatus;
-  /** Set only when this visit was moved off the weekly rhythm. */
+  /** Set when this visit is off the weekly rhythm: moved, done, or an extra visit. */
   customDate?: string;
+  /** Optional appointment time, "HH:MM". */
+  time?: string;
+  /** A one-off visit outside the weekly plan. It counts in cost but not in "Week X of N". */
+  extra?: boolean;
   /** How the skin responded after this service. Only used when completed. */
   result?: PlanResult;
 };
