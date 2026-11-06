@@ -53,7 +53,7 @@ const sectionTitle = (eyebrow: string, title: string, right?: React.ReactNode) =
 
 function App() {
   const [active, setActive] = useState<Tab>("today");
-  const [phaseStart] = useLocalStorage("atelier-phase-start", startOfWeekISO());
+  const [firstClinicDate, setFirstClinicDate] = useLocalStorage("atelier-first-clinic", addDays(startOfWeekISO(), 5));
   const [logs, setLogs] = useLocalStorage<Record<string, DailyLog>>("atelier-daily-logs", {});
   const [ledger, setLedger] = useLocalStorage<LedgerItem[]>("atelier-ledger", initialLedger);
   const [notice, setNotice] = useState("");
@@ -61,7 +61,7 @@ function App() {
 
   const defaultLog: DailyLog = { date: today, completed: {}, redness: 4, hydration: 6, pustules: 0 };
   const [daily, setDaily] = useState<DailyLog>(logs[today] || defaultLog);
-  const clinicDates = useMemo(() => Array.from({ length: 6 }, (_, i) => ({ ...clinicForWeek(i + 1), date: addDays(phaseStart, i * 7 + 5) })), [phaseStart]);
+  const clinicDates = useMemo(() => Array.from({ length: 6 }, (_, i) => ({ ...clinicForWeek(i + 1), date: addDays(firstClinicDate, i * 7) })), [firstClinicDate]);
 
   useEffect(() => {
     const handler = (event: Event) => { event.preventDefault(); setInstallPrompt(event as InstallPrompt); };
@@ -108,7 +108,7 @@ function App() {
           {active === "today" && <Dashboard daily={daily} setDaily={setDaily} saveToday={saveToday} clinicDates={clinicDates} logs={logs} />}
           {active === "mirror" && <Mirror setNotice={setNotice} />}
           {active === "ledger" && <Ledger ledger={ledger} setLedger={setLedger} setNotice={setNotice} />}
-          {active === "plan" && <Plan clinicDates={clinicDates} installPrompt={installPrompt} />}
+          {active === "plan" && <Plan clinicDates={clinicDates} firstClinicDate={firstClinicDate} setFirstClinicDate={setFirstClinicDate} installPrompt={installPrompt} />}
         </main>
 
         <nav className="fixed bottom-0 left-1/2 z-40 w-full max-w-[460px] -translate-x-1/2 px-3 pb-[max(.65rem,env(safe-area-inset-bottom))] md:max-w-[520px]">
@@ -289,13 +289,14 @@ function Ledger({ ledger, setLedger, setNotice }: { ledger: LedgerItem[]; setLed
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) { return <label className="form-field"><span>{label}</span>{children}</label>; }
 
-function Plan({ clinicDates, installPrompt }: { clinicDates: (ReturnType<typeof clinicForWeek> & { date: string })[]; installPrompt: InstallPrompt | null }) {
+function Plan({ clinicDates, firstClinicDate, setFirstClinicDate, installPrompt }: { clinicDates: (ReturnType<typeof clinicForWeek> & { date: string })[]; firstClinicDate: string; setFirstClinicDate: (date: string) => void; installPrompt: InstallPrompt | null }) {
   return <div className="animate-in">
     {sectionTitle("Care plan", "Low risk. High return.", <ShieldCheck className="h-6 w-6 text-sage" />)}
     <Card className="overflow-hidden bg-ink text-white"><CardContent className="p-6 md:p-8"><Badge className="border-champagne/25 bg-champagne/10 text-champagne">{skinProfile.phase}</Badge><h1 className="mt-5 font-serif text-4xl leading-none">{skinProfile.title}</h1><p className="mt-4 max-w-lg text-sm leading-6 text-white/50">{skinProfile.goal}. The “glass-skin” target comes after active inflammation is stable.</p><div className="mt-8 flex flex-wrap gap-2">{skinProfile.conditions.map((condition) => <span key={condition} className="rounded-full border border-white/10 px-3 py-2 text-[11px] text-white/65">{condition}</span>)}</div></CardContent></Card>
 
     <div className="mt-8 grid gap-7 lg:grid-cols-[1.15fr_.85fr]">
       <section>{sectionTitle("Hasaki Clinic", "Six-week cadence")}
+        <label className="mb-3 flex items-center justify-between rounded-2xl border border-black/[.08] bg-white/45 px-4 py-3 text-xs"><span><strong className="block font-medium">First clinic date</strong><span className="text-[10px] text-ink/40">All six visits recalculate automatically</span></span><input className="rounded-lg border border-black/10 bg-white/60 px-2 py-1.5 text-[11px] outline-none" type="date" value={firstClinicDate} onChange={(event) => setFirstClinicDate(event.target.value)} /></label>
         <Card><CardContent className="p-5"><div>{clinicDates.map((clinic, index) => <div key={clinic.week} className="relative flex gap-4 pb-6 last:pb-0"><div className="relative z-10 grid h-9 w-9 shrink-0 place-items-center rounded-full border border-sage/25 bg-[#f5f2eb] font-serif text-sm">{clinic.week}</div>{index < clinicDates.length - 1 && <div className="absolute left-[17px] top-9 h-[calc(100%-36px)] w-px bg-black/10" />}<div className="min-w-0 pt-0.5"><div className="flex flex-wrap items-center gap-2"><p className="text-sm font-medium">{clinic.treatment}</p><Badge>{shortDate(clinic.date)}</Badge></div><p className="mt-1 text-xs text-ink/40">{clinic.purpose} · Hasaki Clinic</p></div></div>)}</div></CardContent></Card>
       </section>
       <section className="space-y-4">{sectionTitle("Decision system", "Guardrails")}
