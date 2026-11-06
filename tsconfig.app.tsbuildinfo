@@ -1,1 +1,0 @@
-{"root":["./src/app.tsx","./src/data.ts","./src/main.tsx","./src/vite-env.d.ts","./src/components/ui/badge.tsx","./src/components/ui/button.tsx","./src/components/ui/card.tsx","./src/components/ui/checkbox.tsx","./src/components/ui/slider.tsx","./src/hooks/use-local-storage.ts","./src/lib/photo-db.ts","./src/lib/utils.ts"],"version":"5.6.3"}
